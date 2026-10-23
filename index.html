@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mihez kezdjünk az MI-vel? | Békevár</title>
+<meta name="description" content="Tedd fel előre, névtelenül a kérdésed a mesterséges intelligenciáról a Békevár Baptista Gyülekezet október 25-i alkalmára.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     ARCULAT: a bekevar.hu színei, egy helyen cserélhetők.
+     ========================================================= */
+  :root {
+    --teal: #49a9c9;        /* Békevár kék: menüsáv, gombok, kiemelések */
+    --teal-dark: #2f8eaf;   /* kék gomb rámutatáskor */
+    --teal-soft: #e5f3f8;   /* kék halvány háttérnek */
+    --deep: #245363;        /* főcímsáv teteje */
+    --night: #0e1015;       /* főcímsáv alja, sötét dobozok */
+    --paper: #f7f9fc;       /* oldal háttere */
+    --card: #ffffff;        /* kártyák háttere */
+    --text: #07070b;        /* fő szövegszín */
+    --muted: #5b6470;       /* másodlagos szöveg */
+    --line: #e2e8ef;        /* vonalak, keretek */
+    --err: #c0392b;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(14,16,21,.05), 0 8px 24px rgba(14,16,21,.07);
+    --font: "Montserrat", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+  .wrap { max-width: 760px; margin: 0 auto; position: relative; }
+
+  /* ---------- Menüsáv ---------- */
+  .topbar { background: var(--teal); padding: 14px 16px; }
+  .topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 1100px; }
+  .wordmark { color: #fff; text-decoration: none; font-weight: 800; font-size: 24px; letter-spacing: -.01em; }
+  .topbar .site {
+    background: #fff; color: var(--teal); text-decoration: none;
+    font-weight: 500; font-size: 15px; padding: 10px 18px; border-radius: 8px;
+  }
+  .topbar .site:hover { color: var(--teal-dark); }
+
+  /* ---------- Főcímsáv ---------- */
+  .hero {
+    background: linear-gradient(180deg, var(--deep) 0%, #235262 40%, #193743 62%, #141e25 78%, #08070c 100%);
+    color: #fff;
+    padding: 52px 16px 96px;
+  }
+  .kicker {
+    font-weight: 600; font-size: 13px; letter-spacing: .2em; text-transform: uppercase;
+    color: #fff; margin: 0; max-width: 620px;
+  }
+  .hero h1 {
+    font-weight: 900; text-transform: uppercase;
+    font-size: clamp(34px, 8.4vw, 64px); line-height: 1.04; letter-spacing: -.005em;
+    margin: 18px 0 18px;
+  }
+  .hero h1 span { display: block; font-weight: 300; }
+  .hero p.lead { font-size: 17px; max-width: 580px; color: rgba(255,255,255,.85); margin: 0 0 24px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { font-weight: 700; font-size: 15px; padding: 10px 18px; border-radius: 8px; }
+  .chip.teal { background: var(--teal); color: #fff; }
+  .chip.white { background: #fff; color: var(--text); }
+
+  /* ---------- Fő tartalom ---------- */
+  main { padding: 0 16px 48px; }
+  main .wrap { margin-top: -56px; display: grid; gap: 22px; }
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; }
+  @media (min-width: 640px) { .card { padding: 30px; } }
+  .eyebrow {
+    font-weight: 600; font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--teal); margin: 0 0 6px;
+  }
+  h2 { font-weight: 800; font-size: 23px; line-height: 1.2; margin: 0 0 6px; color: var(--text); }
+  .sub { color: var(--muted); margin: 0 0 16px; font-size: 15px; }
+
+  textarea, input[type=text] {
+    width: 100%; border: 1.5px solid var(--line); border-radius: 10px;
+    background: var(--paper); padding: 13px 14px; font-size: 16px;
+    transition: border-color .15s, background .15s;
+  }
+  textarea { min-height: 110px; resize: vertical; }
+  textarea:focus, input[type=text]:focus { border-color: var(--teal); background: #fff; outline: none; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .counter { font-size: 13px; color: var(--muted); }
+  .counter.warn { color: var(--err); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border: 0; border-radius: 10px; padding: 14px 26px;
+    font-weight: 700; font-size: 16px;
+    background: var(--teal); color: #fff;
+    transition: transform .08s, background .15s, opacity .15s;
+  }
+  .btn:hover { background: var(--teal-dark); }
+  .btn:active { transform: scale(.98); }
+  .btn[disabled] { opacity: .5; cursor: not-allowed; }
+  .btn.dark { background: var(--night); }
+  .btn.dark:hover { background: #222831; }
+
+  /* ---------- Kérdéslista ---------- */
+  .list-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .seg { display: inline-flex; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 4px; }
+  .seg button { border: 0; background: transparent; border-radius: 7px; padding: 7px 14px; font-weight: 600; font-size: 13px; color: var(--muted); }
+  .seg button[aria-pressed=true] { background: var(--teal); color: #fff; }
+
+  .qlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .q {
+    display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center;
+    border: 1.5px solid var(--line); border-radius: 12px; padding: 14px 14px 14px 16px;
+    background: #fff; transition: border-color .2s;
+  }
+  .q.top { border-color: var(--teal); background: linear-gradient(0deg, #fff, #f3fafd); }
+  .q.fresh { animation: pop .5s ease; }
+  @keyframes pop { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .q-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 16px; font-weight: 500; }
+  .q-meta { font-size: 12.5px; color: var(--muted); margin-top: 6px; display: flex; gap: 8px; align-items: center; }
+  .badge { font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--teal); padding: 2px 8px; border-radius: 6px; }
+
+  .like {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    min-width: 66px; min-height: 66px; padding: 8px 10px;
+    border-radius: 12px; border: 2px solid var(--line); background: #fff;
+    font-weight: 800; font-size: 17px; color: var(--text);
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .like svg { width: 24px; height: 24px; color: var(--teal); }
+  .like small { font-weight: 600; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .like:hover { border-color: var(--teal); }
+  .like:active { transform: scale(.94); }
+  .like[aria-pressed=true] { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .like[aria-pressed=true] small, .like[aria-pressed=true] svg { color: #fff; }
+  .like[aria-pressed=true] svg path { fill: #fff; }
+  .like.bump svg { animation: bump .35s ease; }
+  @keyframes bump { 40% { transform: scale(1.35) rotate(-8deg); } }
+
+  .empty { text-align: center; color: var(--muted); padding: 26px 10px; border: 1.5px dashed var(--line); border-radius: 12px; }
+  .more { margin-top: 12px; width: 100%; background: var(--paper); color: var(--text); border: 1px solid var(--line); }
+  .more:hover { background: var(--teal-soft); }
+
+  /* ---------- Szavak és szófelhő ---------- */
+  .optional { font-weight: 600; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; margin-left: 6px; vertical-align: middle; white-space: nowrap; display: inline-block; }
+  .words { display: grid; gap: 10px; grid-template-columns: 1fr; }
+  @media (min-width: 560px) { .words { grid-template-columns: repeat(3, 1fr); } }
+  .words label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; font-weight: 600; }
+  .thanks { background: var(--teal-soft); border-radius: 10px; padding: 14px 16px; color: var(--text); font-weight: 600; }
+
+  .cloud {
+    margin-top: 18px; min-height: 180px; border-radius: 14px;
+    background: var(--night); padding: 26px 18px;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 6px 16px; text-align: center;
+  }
+  .cloud span { line-height: 1.1; transition: transform .2s; }
+  .cloud span:hover { transform: scale(1.08); }
+  .cloud .none { color: rgba(255,255,255,.6); font-size: 15px; }
+
+  /* ---------- Egyéb ---------- */
+  .notice { font-size: 13px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; margin-top: 14px; }
+  .notice svg { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--teal); }
+  .demo { background: #fff6e0; color: #6b4b0f; border: 1px solid #f1d79c; border-radius: 10px; padding: 10px 14px; font-size: 14px; }
+  .skeleton { height: 66px; border-radius: 12px; background: linear-gradient(90deg, #edf1f6 25%, #f7f9fc 50%, #edf1f6 75%); background-size: 200% 100%; animation: sh 1.2s infinite; }
+  @keyframes sh { to { background-position: -200% 0; } }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 120px);
+    background: var(--night); color: #fff; padding: 12px 18px; border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25); max-width: calc(100% - 32px);
+    font-size: 15px; transition: transform .25s ease; z-index: 10;
+  }
+  .toast.show { transform: translate(-50%, 0); }
+  .toast.err { background: var(--err); }
+
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 10px 16px 40px; }
+  footer a { color: var(--teal-dark); font-weight: 600; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="wordmark" href="https://bekevar.hu" target="_blank" rel="noopener">Békevár</a>
+    <a class="site" href="https://bekevar.hu" target="_blank" rel="noopener">bekevar.hu</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">Mihez kezdjünk a mesterséges intelligenciával?</p>
+    <h1>Milyen kérdéseid<span>vannak a témáról?</span></h1>
+    <p class="lead">Tedd fel előre a kérdésed! Lájkold azokat, amelyekre te is kíváncsi vagy: a legtöbb lájkot kapott kérdések kerülnek előre az alkalmon.</p>
+    <div class="chips">
+      <span class="chip teal" id="eventDate">2026. október 25.</span>
+      <span class="chip white">Névtelen kitöltés</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="demo" id="demoBanner" hidden>
+      <strong>Demó mód:</strong> a kérdések most csak ebben a böngészőben tárolódnak. Az éles működéshez írd be az Apps Script webalkalmazás címét a fájl végén (API_URL).
+    </div>
+
+    <!-- Kérdés beküldése -->
+    <section class="card" aria-labelledby="askTitle">
+      <p class="eyebrow">1. lépés</p>
+      <h2 id="askTitle">Mi a kérdésed?</h2>
+      <p class="sub">Bármi érdekelhet: hit, munka, gyereknevelés, etika, veszélyek, lehetőségek.</p>
+      <form id="askForm" novalidate>
+        <label for="askText" class="sr">Kérdés</label>
+        <textarea id="askText" maxlength="300" required></textarea>
+        <div class="row">
+          <span class="counter" id="askCounter">0 / 300</span>
+          <button class="btn" type="submit" id="askBtn">Kérdés beküldése</button>
+        </div>
+      </form>
+      <p class="notice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <span>Nem kérünk nevet, e-mail címet vagy belépést. A kérdésed névtelenül jelenik meg.</span>
+      </p>
+    </section>
+
+    <!-- Kérdések listája -->
+    <section class="card" aria-labelledby="listTitle">
+      <div class="list-head">
+        <div>
+          <p class="eyebrow">2. lépés</p>
+          <h2 id="listTitle">Lájkold, amire te is kíváncsi vagy</h2>
+          <p class="sub" id="listSub" style="margin:0">Betöltés…</p>
+        </div>
+        <div class="seg" role="group" aria-label="Rendezés">
+          <button type="button" data-sort="nepszeru" aria-pressed="true">Népszerű</button>
+          <button type="button" data-sort="uj" aria-pressed="false">Legújabb</button>
+        </div>
+      </div>
+      <ul class="qlist" id="qlist" aria-live="polite">
+        <li class="skeleton"></li><li class="skeleton"></li><li class="skeleton"></li>
+      </ul>
+      <button class="btn more" type="button" id="moreBtn" hidden>Továbbiak mutatása</button>
+    </section>
+
+    <!-- Három kifejezés + szófelhő -->
+    <section class="card" aria-labelledby="wordsTitle">
+      <p class="eyebrow">Ha van kedved</p>
+      <h2 id="wordsTitle">Három szó az MI-ről <span class="optional">nem kötelező</span></h2>
+      <p class="sub">Mi jut eszedbe a mesterséges intelligenciáról? Írj le legfeljebb három kifejezést, ezekből közös szófelhő készül.</p>
+      <form id="wordsForm" novalidate>
+        <div class="words">
+          <div><label for="w1">1. kifejezés</label><input type="text" id="w1" maxlength="30" autocomplete="off" placeholder="pl. kíváncsiság"></div>
+          <div><label for="w2">2. kifejezés</label><input type="text" id="w2" maxlength="30" autocomplete="off" placeholder="pl. aggodalom"></div>
+          <div><label for="w3">3. kifejezés</label><input type="text" id="w3" maxlength="30" autocomplete="off" placeholder="pl. segítség"></div>
+        </div>
+        <div class="row" style="justify-content:flex-end">
+          <button class="btn dark" type="submit" id="wordsBtn">Hozzáadom a felhőhöz</button>
+        </div>
+      </form>
+      <div class="thanks" id="wordsThanks" hidden>Köszönjük! A kifejezéseid bekerültek a szófelhőbe.</div>
+      <div class="cloud" id="cloud" aria-label="Szófelhő"><span class="none">Betöltés…</span></div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  Békevár Baptista Gyülekezet · 7400 Kaposvár, Béke utca 30. · <a href="https://bekevar.hu" target="_blank" rel="noopener">bekevar.hu</a>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================
+   BEÁLLÍTÁS: ide másold az Apps Script webalkalmazás URL-jét
+   (https://script.google.com/macros/s/.../exec).
+   Amíg üres, az oldal demó módban fut.
+   ========================================================= */
+const CONFIG = {
+  API_URL: "https://script.google.com/macros/s/AKfycbxWXbdxfBm2cesviIo2hpaFxX59MYF6BkqCOijOGvWlMJW6Bf1Ucf4HJbwO_CQoMXM/exec",
+  FRISSITES_MP: 30,   // ennyi másodpercenként frissül a lista
+  OLDALMERET: 20      // ennyi kérdés látszik elsőre
+};
+
+(() => {
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+  const DEMO = !/^https:\/\/script\.google(usercontent)?\.com\//.test(CONFIG.API_URL.trim());
+
+  /* ---------- Névtelen böngészőazonosító (nem személyes adat) ---------- */
+  function store(key, val) {
+    try { if (val === undefined) return localStorage.getItem(key); localStorage.setItem(key, val); } catch (e) { return null; }
+  }
+  let cid = store("bv_mi_cid");
+  if (!cid) {
+    cid = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12));
+    store("bv_mi_cid", cid);
+  }
+
+  /* ---------- Állapot ---------- */
+  let state = { kerdesek: [], szavak: [], kuldtemSzavakat: false };
+  let sortMode = "nepszeru";
+  let showCount = CONFIG.OLDALMERET;
+  const pending = new Set();
+  const seen = new Set();
+  let firstLoad = true;
+
+  /* ---------- API ---------- */
+  async function api(muvelet, extra = {}) {
+    const body = Object.assign({ muvelet, cid }, extra);
+    if (DEMO) return demoApi(body);
+    const res = await fetch(CONFIG.API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error("Hálózati hiba (" + res.status + ")");
+    return res.json();
+  }
+
+  function applyState(s) {
+    if (!s || !s.ok) return;
+    state = { kerdesek: s.kerdesek || [], szavak: s.szavak || [], kuldtemSzavakat: !!s.kuldtemSzavakat };
+    render();
+  }
+
+  async function refresh() {
+    try { applyState(await api("allapot")); }
+    catch (e) { if (firstLoad) { $("listSub").textContent = "Nem sikerült betölteni a kérdéseket. Frissítsd az oldalt."; $("qlist").innerHTML = ""; } }
+  }
+
+  /* ---------- Megjelenítés ---------- */
+  function idoSzoveg(ms) {
+    const d = (Date.now() - ms) / 1000;
+    if (d < 60) return "épp most";
+    if (d < 3600) return Math.floor(d / 60) + " perce";
+    if (d < 86400) return Math.floor(d / 3600) + " órája";
+    if (d < 172800) return "tegnap";
+    return new Date(ms).toLocaleDateString("hu-HU", { month: "long", day: "numeric" });
+  }
+
+  const thumb = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M7 10v11H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h3Zm0 0 4-7a2.5 2.5 0 0 1 3 2.6L13.5 9H19a2 2 0 0 1 2 2.3l-1.3 7.6A2.5 2.5 0 0 1 17.2 21H7"/></svg>';
+
+  function render() {
+    renderQuestions();
+    renderCloud();
+  }
+
+  function sorted() {
+    const list = state.kerdesek.slice();
+    if (sortMode === "uj") list.sort((a, b) => b.ido - a.ido);
+    else list.sort((a, b) => (b.lajk - a.lajk) || (b.ido - a.ido));
+    return list;
+  }
+
+  function renderQuestions() {
+    const ul = $("qlist");
+    const list = sorted();
+    const n = list.length;
+    const total = list.reduce((s, q) => s + q.lajk, 0);
+    $("listSub").textContent = n ? `${n} kérdés · ${total} lájk eddig` : "Még nincs kérdés. Legyél te az első!";
+    ul.innerHTML = "";
+    if (!n) {
+      const li = document.createElement("li");
+      li.className = "empty";
+      li.textContent = "Itt jelennek meg a beküldött kérdések.";
+      ul.appendChild(li);
+    }
+    const maxLike = Math.max(0, ...list.map(q => q.lajk));
+    list.slice(0, showCount).forEach((q, i) => {
+      const li = document.createElement("li");
+      li.className = "q";
+      if (sortMode === "nepszeru" && i < 3 && q.lajk > 0 && q.lajk >= Math.min(3, maxLike)) li.classList.add("top");
+      if (!firstLoad && !seen.has(q.id)) li.classList.add("fresh");
+      seen.add(q.id);
+
+      const body = document.createElement("div");
+      const p = document.createElement("p");
+      p.className = "q-text";
+      p.textContent = q.szoveg;
+      const meta = document.createElement("div");
+      meta.className = "q-meta";
+      if (li.classList.contains("top")) {
+        const b = document.createElement("span"); b.className = "badge"; b.textContent = "Top " + (i + 1); meta.appendChild(b);
+      }
+      const t = document.createElement("span"); t.textContent = idoSzoveg(q.ido); meta.appendChild(t);
+      body.append(p, meta);
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "like";
+      btn.dataset.id = q.id;
+      btn.setAttribute("aria-pressed", q.lajkoltam ? "true" : "false");
+      btn.setAttribute("aria-label", (q.lajkoltam ? "Lájk visszavonása. " : "Lájkolom. ") + q.lajk + " lájk");
+      btn.innerHTML = thumb + "<span>" + q.lajk + "</span><small>" + (q.lajkoltam ? "Lájkoltad" : "Lájk") + "</small>";
+      btn.addEventListener("click", () => toggleLike(q.id, btn));
+
+      li.append(body, btn);
+      ul.appendChild(li);
+    });
+    $("moreBtn").hidden = n <= showCount;
+    firstLoad = false;
+  }
+
+  function hash(s) { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); }
+
+  function renderCloud() {
+    const box = $("cloud");
+    box.innerHTML = "";
+    const words = state.szavak;
+    if (!words.length) {
+      const s = document.createElement("span"); s.className = "none"; s.textContent = "A szófelhő az első kifejezésekkel indul.";
+      box.appendChild(s);
+    } else {
+      const max = Math.max(...words.map(w => w.db));
+      const min = Math.min(...words.map(w => w.db));
+      const colors = ["#ffffff", "#49a9c9", "#a9d6e6", "#d7ecf4", "#7cc0d8"];
+      // stabil sorrend, hogy frissítéskor ne ugráljon
+      words.slice().sort((a, b) => hash(a.szo) - hash(b.szo)).forEach(w => {
+        const r = max === min ? 0.6 : (w.db - min) / (max - min);
+        const s = document.createElement("span");
+        s.textContent = w.szo;
+        s.title = w.szo + ": " + w.db;
+        s.style.fontSize = (15 + Math.round(r * 33)) + "px";
+        s.style.fontWeight = r > 0.66 ? 900 : r > 0.33 ? 800 : 600;
+        s.style.color = r > 0.66 ? "var(--teal)" : colors[hash(w.szo) % colors.length];
+        s.style.opacity = 0.75 + r * 0.25;
+        box.appendChild(s);
+      });
+    }
+    const done = state.kuldtemSzavakat || store("bv_mi_szavak") === "1";
+    $("wordsForm").hidden = done;
+    $("wordsThanks").hidden = !done;
+  }
+
+  /* ---------- Műveletek ---------- */
+  let toastTimer;
+  function toast(msg, err) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.toggle("err", !!err);
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
+  }
+
+  async function toggleLike(id, btn) {
+    const q = state.kerdesek.find(x => x.id === id);
+    if (!q || pending.has(id)) return;
+    pending.add(id);
+    const before = { lajk: q.lajk, lajkoltam: q.lajkoltam };
+    q.lajkoltam = !q.lajkoltam;
+    q.lajk += q.lajkoltam ? 1 : -1;
+    renderQuestions();
+    if (q.lajkoltam) {
+      const nb = document.querySelector('.like[data-id="' + CSS.escape(id) + '"]');
+      if (nb) nb.classList.add("bump");
+    }
+    try {
+      const r = await api("lajk", { id });
+      if (!r.ok) throw new Error(r.hiba || "Nem sikerült.");
+      applyState(r.allapot);
+    } catch (e) {
+      Object.assign(q, before);
+      renderQuestions();
+      toast(e.message || "Nem sikerült a lájk. Próbáld újra.", true);
+    } finally {
+      pending.delete(id);
+    }
+  }
+
+  const askText = $("askText");
+  askText.addEventListener("input", () => {
+    const n = askText.value.length;
+    $("askCounter").textContent = n + " / 300";
+    $("askCounter").classList.toggle("warn", n > 280);
+  });
+
+  $("askForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const szoveg = askText.value.trim();
+    if (szoveg.length < 5) { toast("Írj egy kicsit hosszabb kérdést.", true); askText.focus(); return; }
+    const btn = $("askBtn");
+    btn.disabled = true; btn.textContent = "Küldés…";
+    try {
+      const r = await api("kerdes", { szoveg });
+      if (!r.ok) throw new Error(r.hiba || "Nem sikerült a beküldés.");
+      askText.value = ""; askText.dispatchEvent(new Event("input"));
+      sortMode = "uj"; setSortButtons();
+      applyState(r.allapot);
+      toast("Köszönjük! A kérdésed felkerült a listára.");
+      $("qlist").scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      btn.disabled = false; btn.textContent = "Kérdés beküldése";
+    }
+  });
+
+  $("wordsForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const szavak = ["w1", "w2", "w3"].map(id => $(id).value.trim()).filter(Boolean);
+    if (!szavak.length) { toast("Írj legalább egy kifejezést.", true); $("w1").focus(); return; }
+    const btn = $("wordsBtn");
+    btn.disabled = true; btn.textContent = "Küldés…";
+    try {
+      const r = await api("szavak", { szavak });
+      if (!r.ok) throw new Error(r.hiba || "Nem sikerült a beküldés.");
+      store("bv_mi_szavak", "1");
+      applyState(r.allapot);
+      toast("Köszönjük! Nézd meg a szófelhőt.");
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      btn.disabled = false; btn.textContent = "Hozzáadom a felhőhöz";
+    }
+  });
+
+  function setSortButtons() {
+    document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.sort === sortMode ? "true" : "false"));
+  }
+  document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
+    sortMode = b.dataset.sort; setSortButtons(); renderQuestions();
+  }));
+  $("moreBtn").addEventListener("click", () => { showCount += CONFIG.OLDALMERET; renderQuestions(); });
+
+  /* ---------- Demó mód (Apps Script nélkül, csak böngészőben) ---------- */
+  function demoApi(b) {
+    let db;
+    try { db = JSON.parse(store("bv_mi_demo") || "null"); } catch (e) { db = null; }
+    if (!db) {
+      const now = Date.now();
+      db = {
+        q: [
+          { id: "d1", ido: now - 7200e3, szoveg: "Bűn-e, ha prédikáció vagy áhítat írásához használok MI-t?", likes: ["x1", "x2", "x3", "x4"] },
+          { id: "d2", ido: now - 3600e3, szoveg: "Hogyan beszéljek a gyerekeimmel arról, hogy mire jó és mire nem a ChatGPT?", likes: ["x1", "x2"] },
+          { id: "d3", ido: now - 600e3, szoveg: "Elveszi-e az MI a munkánkat?", likes: ["x5"] }
+        ],
+        w: [{ s: "kíváncsiság", c: "x1" }, { s: "félelem", c: "x1" }, { s: "kíváncsiság", c: "x2" }, { s: "eszköz", c: "x2" }, { s: "jövő", c: "x3" }, { s: "eszköz", c: "x3" }, { s: "kíváncsiság", c: "x4" }]
+      };
+    }
+    const out = (extra) => {
+      store("bv_mi_demo", JSON.stringify(db));
+      const cnt = {};
+      db.w.forEach(x => cnt[x.s] = (cnt[x.s] || 0) + 1);
+      const allapot = {
+        ok: true,
+        kerdesek: db.q.map(q => ({ id: q.id, ido: q.ido, szoveg: q.szoveg, lajk: q.likes.length, lajkoltam: q.likes.includes(b.cid) })),
+        szavak: Object.keys(cnt).map(s => ({ szo: s, db: cnt[s] })),
+        kuldtemSzavakat: db.w.some(x => x.c === b.cid)
+      };
+      return Promise.resolve(extra ? Object.assign({ ok: true, allapot }, extra) : allapot);
+    };
+    if (b.muvelet === "kerdes") {
+      if (db.q.some(q => q.szoveg.toLowerCase() === b.szoveg.toLowerCase())) return Promise.resolve({ ok: false, hiba: "Ez a kérdés már szerepel a listán. Lájkold inkább azt!" });
+      db.q.push({ id: "d" + Date.now(), ido: Date.now(), szoveg: b.szoveg.slice(0, 300), likes: [] });
+      return out({});
+    }
+    if (b.muvelet === "lajk") {
+      const q = db.q.find(x => x.id === b.id);
+      if (q) { const i = q.likes.indexOf(b.cid); i >= 0 ? q.likes.splice(i, 1) : q.likes.push(b.cid); }
+      return out({});
+    }
+    if (b.muvelet === "szavak") {
+      if (db.w.some(x => x.c === b.cid)) return Promise.resolve({ ok: false, hiba: "Innen már érkeztek kifejezések. Köszönjük!" });
+      [...new Set(b.szavak.map(s => s.replace(/\s+/g, " ").trim().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "").toLowerCase()).filter(Boolean))].slice(0, 3).forEach(s => db.w.push({ s, c: b.cid }));
+      return out({});
+    }
+    return out();
+  }
+
+  /* ---------- Indítás ---------- */
+  $("demoBanner").hidden = !DEMO;
+  refresh();
+  setInterval(() => { if (document.visibilityState === "visible" && !pending.size) refresh(); }, CONFIG.FRISSITES_MP * 1000);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") refresh(); });
+})();
+</script>
+</body>
+</html>
